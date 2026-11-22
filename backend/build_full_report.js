@@ -1,4 +1,4 @@
-const fs = require("fs");
+﻿const fs = require("fs");
 const path = require("path");
 const docx = require("docx");
 
@@ -196,14 +196,14 @@ const logoData = fs.existsSync(logoPath) ? fs.readFileSync(logoPath) : null;
 coverElements.push(
   p("Galgotias College of Engineering & Technology", { bold: true, size: 30, align: AlignmentType.CENTER, spaceAfter: 40 }),
   p("Greater Noida", { size: 24, align: AlignmentType.CENTER, spaceAfter: 80 }),
-  p("Department of Computer Applications", { bold: true, size: 26, align: AlignmentType.CENTER, spaceAfter: 160 })
+  p("Department of Computer Applications", { bold: true, size: 26, align: AlignmentType.CENTER, spaceAfter: 120 })
 );
 
 if (logoData) {
   coverElements.push(
     new Paragraph({
       alignment: AlignmentType.CENTER,
-      spacing: { before: 80, after: 180 },
+      spacing: { before: 80, after: 160 },
       children: [
         new ImageRun({
           data: logoData,
@@ -215,22 +215,46 @@ if (logoData) {
 }
 
 coverElements.push(
-  p("Mini Project (BMC353)", { bold: true, size: 26, align: AlignmentType.CENTER, spaceAfter: 120 }),
-  p("Report on", { italics: true, size: 22, align: AlignmentType.CENTER, spaceAfter: 120 }),
-  p("E-COMMERCE PRODUCT REVIEW SENTIMENT DASHBOARD", { bold: true, size: 36, align: AlignmentType.CENTER, spaceAfter: 180 }),
+  p("Mini Project (BMC353)", { bold: true, size: 26, align: AlignmentType.CENTER, spaceAfter: 60 }),
+  p("Report", { bold: true, size: 24, align: AlignmentType.CENTER, spaceAfter: 60 }),
+  p("on", { bold: true, size: 24, align: AlignmentType.CENTER, spaceAfter: 120 }),
+  p("E-COMMERCE PRODUCT REVIEW SENTIMENT DASHBOARD", { bold: true, size: 36, align: AlignmentType.CENTER, spaceAfter: 160 }),
   p("Submitted in partial fulfilment of the requirements for the degree of", { size: 22, align: AlignmentType.CENTER, spaceAfter: 40 }),
   p("Master of Computer Applications – 3rd Semester", { bold: true, size: 24, align: AlignmentType.CENTER, spaceAfter: 80 }),
-  p("Session: 2026–27", { bold: true, size: 22, align: AlignmentType.CENTER, spaceAfter: 240 }),
-  createStyledTable(
-    ["Submitted by:", "Under the supervision of:"],
-    [
-      [
-        "Vaibhav (Roll No: 2500970140206)\nVaishnavi (Roll No: 2500970140208)\nVivek Kumar (Roll No: 2500970140211)\nSection: C (Group C2-G4)",
-        "Mr. Avijit Sasmal\nAssistant Professor\nDepartment of Computer Applications\nGalgotias College of Engineering & Technology"
-      ]
-    ],
-    [4800, 4800]
-  )
+  p("Session: 2026–27", { bold: true, size: 22, align: AlignmentType.CENTER, spaceAfter: 200 }),
+  p("Submitted by:", { bold: true, size: 24, align: AlignmentType.LEFT, spaceAfter: 60 }),
+  new Table({
+    width: { size: 100, type: WidthType.PERCENTAGE },
+    alignment: AlignmentType.CENTER,
+    rows: [
+      new TableRow({
+        tableHeader: true,
+        children: ["Name", "University Roll No.", "Section"].map((h, i) =>
+          new TableCell({
+            borders: thinBorder,
+            width: { size: [3600, 4200, 1800][i], type: WidthType.DXA },
+            children: [new Paragraph({ alignment: AlignmentType.CENTER, spacing: { before: 60, after: 60 }, children: [new TextRun({ text: h, bold: true, size: 22, font: FONT_NAME })] })]
+          })
+        )
+      }),
+      ...[ 
+        ["Vaibhav", "2500970140206", "C"],
+        ["Vaishnavi", "2500970140208", "C"],
+        ["Vivek Kumar", "2500970140211", "C"]
+      ].map(r => new TableRow({
+        children: r.map((c, i) => new TableCell({
+          borders: thinBorder,
+          width: { size: [3600, 4200, 1800][i], type: WidthType.DXA },
+          children: [new Paragraph({ alignment: AlignmentType.CENTER, spacing: { before: 40, after: 40 }, children: [new TextRun({ text: c, size: 22, font: FONT_NAME })] })]
+        }))
+      }))
+    ]
+  }),
+  p("", { spaceAfter: 120 }),
+  p("Under the supervision of:", { bold: true, size: 24, align: AlignmentType.LEFT, spaceAfter: 60 }),
+  p("Mr. Avijit Sasmal", { bold: true, size: 24, align: AlignmentType.LEFT, spaceAfter: 40 }),
+  p("Assistant Professor, Department of Computer Applications", { size: 22, align: AlignmentType.LEFT, spaceAfter: 40 }),
+  p("Galgotias College of Engineering & Technology, Greater Noida", { size: 22, align: AlignmentType.LEFT, spaceAfter: 60 })
 );
 
 // ==========================================
@@ -242,10 +266,38 @@ const prelimElements = [];
 prelimElements.push(
   h1("CERTIFICATE"),
   p("Date: 23 November 2026", { align: AlignmentType.RIGHT, spaceAfter: 160 }),
-  p("This is to certify that the mini project report titled “E-Commerce Product Review Sentiment Dashboard” is a bona fide record of the work carried out by Vaibhav (Roll No: 2500970140206), Vaishnavi (Roll No: 2500970140208), and Vivek Kumar (Roll No: 2500970140211) under my supervision, in partial fulfilment of the requirements of Mini Project (BMC353) for the 3rd Semester of Master of Computer Applications (MCA) at Galgotias College of Engineering & Technology, Greater Noida, during the academic session 2026–27."),
-  p("To the best of my knowledge, the work reported here is the students’ own and has not been submitted elsewhere for the award of any degree or diploma. The project has been successfully completed and is submitted for evaluation."),
-  p("", { spaceAfter: 360 }),
-  createStyledTable(
+  p("This is to certify that the mini project report titled “E-Commerce Product Review Sentiment Dashboard” is a bona fide record of the work carried out by the following students of 3rd Semester, Master of Computer Applications (MCA) at Galgotias College of Engineering & Technology, Greater Noida, under my supervision in partial fulfilment of the requirements of Mini Project (BMC353), during the academic session 2026–27:"),
+  new Table({
+    width: { size: 100, type: WidthType.PERCENTAGE },
+    alignment: AlignmentType.CENTER,
+    rows: [
+      new TableRow({
+        tableHeader: true,
+        children: ["S.No.", "Name of Student", "University Roll No.", "Section"].map((h, i) =>
+          new TableCell({
+            borders: thinBorder,
+            width: { size: [900, 3600, 3600, 1500][i], type: WidthType.DXA },
+            children: [new Paragraph({ alignment: AlignmentType.CENTER, spacing: { before: 60, after: 60 }, children: [new TextRun({ text: h, bold: true, size: 22, font: FONT_NAME })] })]
+          })
+        )
+      }),
+      ...[
+        ["1.", "Vaibhav", "2500970140206", "C"],
+        ["2.", "Vaishnavi", "2500970140208", "C"],
+        ["3.", "Vivek Kumar", "2500970140211", "C"]
+      ].map(r => new TableRow({
+        children: r.map((cel, i) => new TableCell({
+          borders: thinBorder,
+          width: { size: [900, 3600, 3600, 1500][i], type: WidthType.DXA },
+          children: [new Paragraph({ alignment: AlignmentType.CENTER, spacing: { before: 40, after: 40 }, children: [new TextRun({ text: cel, size: 22, font: FONT_NAME })] })]
+        }))
+      }))
+    ]
+  }),
+  p("", { spaceAfter: 100 }),
+  p("To the best of my knowledge, the work reported in this report is their own work and has not been submitted to any other university or institution for the award of any degree or diploma. The project has been successfully completed and is submitted for evaluation."),
+  p("", { spaceAfter: 300 }),
+    createStyledTable(
     ["Supervisor", "Head of Department"],
     [
       [
@@ -275,17 +327,36 @@ prelimElements.push(
   p("We hereby declare that the mini project report titled “E-Commerce Product Review Sentiment Dashboard”, submitted to the Department of Computer Applications, Galgotias College of Engineering & Technology, Greater Noida, is a record of original work carried out by us under the supervision of Mr. Avijit Sasmal, Assistant Professor, Department of Computer Applications."),
   p("We further declare that this work has not been submitted, in part or in full, to any other university or institute for the award of any degree or diploma. All sources of information, text, figures, and code taken from the work of others have been duly acknowledged and cited in the References."),
   p("We also declare that generative AI tools have not been used to generate content submitted here as our original work. Use of technical tools was limited to reading official software documentation, syntax verification, and debugging during implementation. We understand that this report will undergo Turnitin verification for similarity and AI-writing."),
-  p("Date: 23 November 2026", { spaceBefore: 180 }),
-  p("Place: Greater Noida", { spaceAfter: 240 }),
-  createStyledTable(
-    ["Student Name", "University Roll No.", "Signature"],
-    [
-      ["Vaibhav", "2500970140206", ""],
-      ["Vaishnavi", "2500970140208", ""],
-      ["Vivek Kumar", "2500970140211", ""]
-    ],
-    [3200, 3200, 3200]
-  ),
+  new Table({
+    width: { size: 100, type: WidthType.PERCENTAGE },
+    alignment: AlignmentType.CENTER,
+    rows: [
+      new TableRow({
+        tableHeader: true,
+        children: ["S.No.", "Name of Student", "University Roll No.", "Signature"].map((h, i) =>
+          new TableCell({
+            borders: thinBorder,
+            width: { size: [900, 3300, 3300, 2100][i], type: WidthType.DXA },
+            children: [new Paragraph({ alignment: AlignmentType.CENTER, spacing: { before: 60, after: 60 }, children: [new TextRun({ text: h, bold: true, size: 22, font: FONT_NAME })] })]
+          })
+        )
+      }),
+      ...[
+        ["1.", "Vaibhav", "2500970140206", ""],
+        ["2.", "Vaishnavi", "2500970140208", ""],
+        ["3.", "Vivek Kumar", "2500970140211", ""]
+      ].map(r => new TableRow({
+        children: r.map((cel, i) => new TableCell({
+          borders: thinBorder,
+          width: { size: [900, 3300, 3300, 2100][i], type: WidthType.DXA },
+          children: [new Paragraph({ alignment: AlignmentType.CENTER, spacing: { before: 40, after: 40 }, children: [new TextRun({ text: cel, size: 22, font: FONT_NAME })] })]
+        }))
+      }))
+    ]
+  }),
+  p("", { spaceAfter: 160 }),
+  p("Date: 23 November 2026", { spaceBefore: 100, spaceAfter: 60 }),
+  p("Place: Greater Noida", { spaceAfter: 120 }),
   new Paragraph({ children: [new PageBreak()] })
 );
 
@@ -296,9 +367,10 @@ prelimElements.push(
   p("We extend our heartfelt thanks to our project supervisor, Mr. Avijit Sasmal, Assistant Professor, Department of Computer Applications, for his continuous guidance, critical observations, and technical encouragement throughout the project lifecycle. His practical advice helped us structure our data cleaning procedures, validate our machine learning metrics, and refine the decoupled full-stack architecture."),
   p("We also take this opportunity to thank Prof. (Dr.) Vinit Kumar, Head of the Department of Computer Applications, for his institutional encouragement and for providing the lab resources required to design and test our software implementation."),
   p("We also express our appreciation to our faculty members, laboratory staff, and peers who shared suggestions during the initial design reviews. Finally, we thank our family members and friends for their patience, understanding, and moral support throughout the course of our studies."),
-  p("Vaibhav (2500970140206)", { bold: true, align: AlignmentType.RIGHT, spaceBefore: 240 }),
-  p("Vaishnavi (2500970140208)", { bold: true, align: AlignmentType.RIGHT }),
-  p("Vivek Kumar (2500970140211)", { bold: true, align: AlignmentType.RIGHT, spaceAfter: 120 }),
+  p("Vaibhav", { bold: true, align: AlignmentType.LEFT, spaceBefore: 240, spaceAfter: 40 }),
+  p("Vaishnavi", { bold: true, align: AlignmentType.LEFT, spaceAfter: 40 }),
+  p("Vivek Kumar", { bold: true, align: AlignmentType.LEFT, spaceAfter: 120 }),
+  p("Date: ____________", { align: AlignmentType.LEFT, spaceAfter: 60 }),
   new Paragraph({ children: [new PageBreak()] })
 );
 
