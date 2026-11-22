@@ -53,7 +53,7 @@ This project delivers an interactive, end-to-end full-stack web application that
 ```bash
 cd ml
 pip install -r requirements.txt
-python pipeline.py
+python review_analysis.py
 ```
 *Outputs cleaned and enriched data to `../backend/data/reviews.json` and performance metrics to `metrics.txt`.*
 
