@@ -11,11 +11,9 @@ const {
   TableRow,
   TableCell,
   AlignmentType,
-  HeadingLevel,
   BorderStyle,
   WidthType,
   PageBreak,
-  Header,
   Footer,
   PageNumber,
   NumberFormat,
@@ -188,47 +186,41 @@ function codeBlock(lines) {
   return lines.map(l => codeLine(l));
 }
 
-// ASSEMBLE DOCUMENT
-const docElements = [];
-
 // ==========================================
-// 1. COVER / TITLE PAGE
+// SECTION 0: COVER / TITLE PAGE (Unnumbered)
 // ==========================================
+const coverElements = [];
 const logoPath = path.join(__dirname, "assets", "gcet_logo.jpg");
 const logoData = fs.existsSync(logoPath) ? fs.readFileSync(logoPath) : null;
 
-docElements.push(
+coverElements.push(
   p("Galgotias College of Engineering & Technology", { bold: true, size: 30, align: AlignmentType.CENTER, spaceAfter: 40 }),
   p("Greater Noida", { size: 24, align: AlignmentType.CENTER, spaceAfter: 80 }),
   p("Department of Computer Applications", { bold: true, size: 26, align: AlignmentType.CENTER, spaceAfter: 160 })
 );
 
 if (logoData) {
-  docElements.push(
+  coverElements.push(
     new Paragraph({
       alignment: AlignmentType.CENTER,
       spacing: { before: 80, after: 180 },
       children: [
         new ImageRun({
           data: logoData,
-          transformation: {
-            width: 110,
-            height: 110
-          }
+          transformation: { width: 110, height: 110 }
         })
       ]
     })
   );
 }
 
-docElements.push(
+coverElements.push(
   p("Mini Project (BMC353)", { bold: true, size: 26, align: AlignmentType.CENTER, spaceAfter: 120 }),
   p("Report on", { italics: true, size: 22, align: AlignmentType.CENTER, spaceAfter: 120 }),
   p("E-COMMERCE PRODUCT REVIEW SENTIMENT DASHBOARD", { bold: true, size: 36, align: AlignmentType.CENTER, spaceAfter: 180 }),
   p("Submitted in partial fulfilment of the requirements for the degree of", { size: 22, align: AlignmentType.CENTER, spaceAfter: 40 }),
   p("Master of Computer Applications – 3rd Semester", { bold: true, size: 24, align: AlignmentType.CENTER, spaceAfter: 80 }),
   p("Session: 2026–27", { bold: true, size: 22, align: AlignmentType.CENTER, spaceAfter: 240 }),
-  
   createStyledTable(
     ["Submitted by:", "Under the supervision of:"],
     [
@@ -238,14 +230,16 @@ docElements.push(
       ]
     ],
     [4800, 4800]
-  ),
-  new Paragraph({ children: [new PageBreak()] })
+  )
 );
 
 // ==========================================
-// 2. CERTIFICATE
+// SECTION 1: PRELIMINARY PAGES (Roman: ii, iii, iv...)
 // ==========================================
-docElements.push(
+const prelimElements = [];
+
+// CERTIFICATE
+prelimElements.push(
   h1("CERTIFICATE"),
   p("Date: 23 November 2026", { align: AlignmentType.RIGHT, spaceAfter: 160 }),
   p("This is to certify that the mini project report titled “E-Commerce Product Review Sentiment Dashboard” is a bona fide record of the work carried out by Vaibhav (Roll No: 2500970140206), Vaishnavi (Roll No: 2500970140208), and Vivek Kumar (Roll No: 2500970140211) under my supervision, in partial fulfilment of the requirements of Mini Project (BMC353) for the 3rd Semester of Master of Computer Applications (MCA) at Galgotias College of Engineering & Technology, Greater Noida, during the academic session 2026–27."),
@@ -275,10 +269,8 @@ docElements.push(
   new Paragraph({ children: [new PageBreak()] })
 );
 
-// ==========================================
-// 3. DECLARATION
-// ==========================================
-docElements.push(
+// DECLARATION
+prelimElements.push(
   h1("DECLARATION"),
   p("We hereby declare that the mini project report titled “E-Commerce Product Review Sentiment Dashboard”, submitted to the Department of Computer Applications, Galgotias College of Engineering & Technology, Greater Noida, is a record of original work carried out by us under the supervision of Mr. Avijit Sasmal, Assistant Professor, Department of Computer Applications."),
   p("We further declare that this work has not been submitted, in part or in full, to any other university or institute for the award of any degree or diploma. All sources of information, text, figures, and code taken from the work of others have been duly acknowledged and cited in the References."),
@@ -297,10 +289,8 @@ docElements.push(
   new Paragraph({ children: [new PageBreak()] })
 );
 
-// ==========================================
-// 4. ACKNOWLEDGEMENT
-// ==========================================
-docElements.push(
+// ACKNOWLEDGEMENT
+prelimElements.push(
   h1("ACKNOWLEDGEMENT"),
   p("We express our sincere gratitude to Galgotias College of Engineering & Technology, Greater Noida, for providing us with the necessary academic environment and facilities to carry out this mini project titled “E-Commerce Product Review Sentiment Dashboard” as an integral part of the Master of Computer Applications (MCA) 3rd Semester curriculum."),
   p("We extend our heartfelt thanks to our project supervisor, Mr. Avijit Sasmal, Assistant Professor, Department of Computer Applications, for his continuous guidance, critical observations, and technical encouragement throughout the project lifecycle. His practical advice helped us structure our data cleaning procedures, validate our machine learning metrics, and refine the decoupled full-stack architecture."),
@@ -312,13 +302,11 @@ docElements.push(
   new Paragraph({ children: [new PageBreak()] })
 );
 
-// ==========================================
-// 5. ABSTRACT
-// ==========================================
-docElements.push(
+// ABSTRACT
+prelimElements.push(
   h1("ABSTRACT"),
   p("Online shopping platforms host hundreds of customer reviews per product, making manual assessment tedious and leaving consumers vulnerable to deceptive feedback such as copy-pasted comments, bot submissions, and promotional spam. This project implements the E-Commerce Product Review Sentiment Dashboard, an interactive end-to-end full-stack web application designed to normalize, screen, and classify consumer reviews into positive, neutral, and negative categories while isolating suspicious entries."),
-  p("The data pipeline employs HTML tag stripping, regex text cleaning, and heuristic rules to identify copy-pasted entries, extreme punctuation, all-caps text, and promotional links. Genuine customer reviews are vectorized using Term Frequency-Inverse Document Frequency (TF-IDF) n-grams and classified using a multi-class Logistic Regression classifier with balanced class weights. The serving layer comprises an Express.js REST API featuring dual persistence—connecting to MongoDB when available and automatically defaulting to a sanitized JSON store for offline evaluation. The frontend dashboard, developed in React and Recharts, delivers dynamic metric cards, an interactive pie chart, and a stacked bar chart with bidirectional cross-filtering. Selecting a product or sentiment segment dynamically updates chart visualizations, summary statistics, and the paginated review ledger. The classifier demonstrated 99.2% accuracy on the evaluation dataset, confirming the feasibility of lightweight natural language processing models for real-time customer sentiment intelligence without prohibitive GPU infrastructure."),
+  p("The data processing workflow employs HTML tag stripping, regex text cleaning, and heuristic rules to identify copy-pasted entries, extreme punctuation, all-caps text, and promotional links. Genuine customer reviews are vectorized using Term Frequency-Inverse Document Frequency (TF-IDF) n-grams and classified using a multi-class Logistic Regression classifier with balanced class weights. The serving layer comprises an Express.js REST API featuring dual persistence—connecting to MongoDB when available and automatically defaulting to a sanitized JSON store for offline evaluation. The frontend dashboard, developed in React and Recharts, delivers dynamic metric cards, an interactive pie chart, and a stacked bar chart with bidirectional cross-filtering. Selecting a product or sentiment segment dynamically updates chart visualizations, summary statistics, and the paginated review ledger. The classifier demonstrated 99.2% accuracy on the evaluation dataset, confirming the feasibility of lightweight natural language processing models for real-time customer sentiment intelligence without prohibitive GPU infrastructure."),
   pMulti([
     { text: "Keywords: ", bold: true },
     { text: "Sentiment Analysis, E-Commerce Reviews, TF-IDF Vectorization, Logistic Regression, Deceptive Review Detection, React Dashboard." }
@@ -326,10 +314,8 @@ docElements.push(
   new Paragraph({ children: [new PageBreak()] })
 );
 
-// ==========================================
-// 6. TABLE OF CONTENTS
-// ==========================================
-docElements.push(
+// TABLE OF CONTENTS
+prelimElements.push(
   h1("TABLE OF CONTENTS"),
   createStyledTable(
     ["Chapter / Section", "Title", "Page"],
@@ -390,10 +376,8 @@ docElements.push(
   new Paragraph({ children: [new PageBreak()] })
 );
 
-// ==========================================
-// 7. LIST OF FIGURES & TABLES
-// ==========================================
-docElements.push(
+// LIST OF FIGURES & TABLES
+prelimElements.push(
   h1("LIST OF FIGURES"),
   createStyledTable(
     ["Figure No.", "Title", "Page"],
@@ -430,10 +414,8 @@ docElements.push(
   new Paragraph({ children: [new PageBreak()] })
 );
 
-// ==========================================
-// 8. LIST OF ABBREVIATIONS
-// ==========================================
-docElements.push(
+// LIST OF ABBREVIATIONS
+prelimElements.push(
   h1("LIST OF ABBREVIATIONS"),
   createStyledTable(
     ["Abbreviation", "Full Expansion"],
@@ -458,25 +440,27 @@ docElements.push(
       ["UX", "User Experience"]
     ],
     [2600, 7000]
-  ),
-  new Paragraph({ children: [new PageBreak()] })
+  )
 );
 
 // ==========================================
-// CHAPTER 1: INTRODUCTION
+// SECTION 2: MAIN REPORT CHAPTERS (Arabic: 1, 2, 3...)
 // ==========================================
-docElements.push(
+const mainElements = [];
+
+// CHAPTER 1
+mainElements.push(
   h1("CHAPTER 1\nINTRODUCTION"),
   h2("1.1 Background and Motivation"),
-  p("In modern e-commerce marketplaces, consumer decision-making relies heavily on user-submitted ratings and textual product reviews. Platforms like Amazon, Flipkart, and specialized direct-to-consumer websites host thousands of user comments per inventory item. However, the sheer volume of customer feedback creates an information overload problem. Prospective buyers cannot read hundreds of lengthy comments to assess whether a product has persistent build flaws, unreliable battery life, or deceptive claims."),
-  p("Furthermore, commercial review sections are frequently distorted by fake reviews, automated bot submissions, duplicate spam, and promotional links posted by incentivized sellers. Standard star rating averages fail to capture nuanced qualitative opinions and can be easily inflated by coordinated bot campaigns. Retailers and brand owners equally suffer from this lack of clean visibility: genuine customer complaints regarding defective components or late shipments get buried beneath duplicate entries and boilerplate comments. There is an urgent practical requirement for an automated processing system that filters out suspicious noise, classifies genuine sentiments, and presents actionable analytics via an interactive visual dashboard."),
+  p("In modern e-commerce marketplaces, consumer decision-making relies heavily on user-submitted ratings and textual product reviews. Platforms like Amazon, Flipkart, and specialized direct-to-consumer websites host thousands of user comments per inventory item. Natural language processing and opinion mining techniques [1] offer computational methods to distill public sentiment from this vast collection of unstructured customer text. However, the sheer volume of customer feedback creates an information overload problem. Prospective buyers cannot read hundreds of lengthy comments to assess whether a product has persistent build flaws, unreliable battery life, or deceptive claims."),
+  p("Furthermore, commercial review sections are frequently distorted by fake reviews, automated bot submissions, duplicate spam, and promotional links posted by incentivized sellers [2]. Standard star rating averages fail to capture nuanced qualitative opinions and can be easily inflated by coordinated bot campaigns. Retailers and brand owners equally suffer from this lack of clean visibility: genuine customer complaints regarding defective components or late shipments get buried beneath duplicate entries and boilerplate comments. There is an urgent practical requirement for an automated processing system that filters out suspicious noise, classifies genuine sentiments, and presents actionable analytics via an interactive visual dashboard."),
 
   h2("1.2 Problem Statement"),
   p("Shoppers and retail sellers face substantial friction in separating genuine customer feedback from fabricated, repetitive, and anomalous reviews. Existing e-commerce feedback displays present unstructured, unverified review lists with simple arithmetic star averages that can be manipulated and do not summarize sentiment distribution. Consequently, consumers struggle to determine true customer satisfaction before purchasing, while merchant operations teams lack a consolidated, real-time dashboard to isolate recurring product grievances and track sentiment trends."),
 
   h2("1.3 Objectives"),
   p("The main objectives of this mini project are formulated as follows:"),
-  p("1. Data Refinement and Automated Text Normalization: To develop a robust preprocessing pipeline that strips HTML artifacts, lowercases text, eliminates punctuation noise, and removes identical duplicate entries to produce reliable textual data for model training."),
+  p("1. Data Refinement and Automated Text Normalization: To develop a robust text normalization workflow that strips HTML artifacts, lowercases text, eliminates punctuation noise, and removes identical duplicate entries to produce reliable textual data for model training."),
   p("2. Heuristic Deceptive Review Screening: To design and implement a rule-based detection engine capable of flagging suspicious reviews based on high copy-paste frequency, extreme character capitalization, excessive punctuation, and promotional phrase patterns."),
   p("3. Multi-Class Sentiment Classification: To train and evaluate a scikit-learn machine learning classifier utilizing sublinear TF-IDF feature extraction and Logistic Regression to categorize clean customer feedback into Positive, Neutral, and Negative classes."),
   p("4. Resilient REST API Service: To build an Express.js backend offering dynamic querying and statistics calculation with dual persistence—supporting MongoDB along with an automated fallback to a local JSON database."),
@@ -493,7 +477,7 @@ docElements.push(
   p("This software provides practical utility for both B2C shoppers seeking unbiased summaries before committing funds, and small-to-medium retail brands needing an economical, self-hosted sentiment monitoring portal without paying expensive SaaS subscriptions."),
 
   h3("1.4.4 SDG Alignment"),
-  p("This project aligns directly with United Nations Sustainable Development Goal 12: Responsible Consumption and Production. Specifically, it addresses Target 12.8, which mandates ensuring that people everywhere have relevant information and awareness for sustainable development and lifestyles in harmony with nature. By isolating deceptive reviews and surfacing accurate qualitative durability signals, the dashboard prevents wasteful purchases of substandard goods and encourages merchants to build durable, higher-quality products."),
+  p("This project aligns directly with United Nations Sustainable Development Goal 12: Responsible Consumption and Production [3]. Specifically, it addresses Target 12.8, which mandates ensuring that people everywhere have relevant information and awareness for sustainable development and lifestyles in harmony with nature. By isolating deceptive reviews and surfacing accurate qualitative durability signals, the dashboard prevents wasteful purchases of substandard goods and encourages merchants to build durable, higher-quality products."),
 
   h2("1.5 Key Features of the Project"),
   p("• Heuristic Spam Tagger: Automatically assigns flags such as copy-pasted, all-caps, too-short, and promotional/link before classification."),
@@ -504,18 +488,16 @@ docElements.push(
   new Paragraph({ children: [new PageBreak()] })
 );
 
-// ==========================================
-// CHAPTER 2: BACKGROUND STUDY AND FEASIBILITY
-// ==========================================
-docElements.push(
+// CHAPTER 2
+mainElements.push(
   h1("CHAPTER 2\nBACKGROUND STUDY AND FEASIBILITY"),
   h2("2.1 Theoretical Background"),
-  p("Natural Language Processing (NLP) converts human text into structured mathematical vectors suitable for statistical classifiers. Sentiment analysis involves classifying the subjective polarity expressed in a text document. In this project, the pipeline employs Term Frequency-Inverse Document Frequency (TF-IDF) feature representation followed by multi-class Logistic Regression."),
-  p("Term Frequency measures how frequently a term appears within a specific review:"),
+  p("Natural Language Processing (NLP) converts human text into structured mathematical vectors suitable for statistical classifiers. Sentiment analysis involves classifying the subjective polarity expressed in a text document. In this project, the analytical model employs Term Frequency-Inverse Document Frequency (TF-IDF) feature representation [4] followed by multi-class Logistic Regression."),
+  p("Term Frequency measures how frequently a term appears within a specific review document:"),
   p("TF(t, d) = count(t in d) / total_words(d)", { align: AlignmentType.CENTER, italics: true }),
   p("Inverse Document Frequency measures the informational rarity of the word across the entire corpus D:"),
   p("IDF(t, D) = log((1 + |D|) / (1 + DF(t, D))) + 1", { align: AlignmentType.CENTER, italics: true }),
-  p("The resulting feature value represents words that are descriptive of particular reviews while penalizing ubiquitous English words. In our implementation, sublinear term frequency scaling is applied (sublinear_tf=True), replacing raw term count with 1 + log(TF), which dampens the distorting impact of repeated keywords."),
+  p("The resulting feature value represents words that are descriptive of particular reviews while penalizing ubiquitous English words. In our implementation, sublinear term frequency scaling is applied (sublinear_tf=True), replacing raw term count with 1 + log(TF), which dampens the distorting impact of repeated keywords [5]."),
   p("Logistic Regression is a linear classification model that estimates the probability of each category using the logistic sigmoid function for binary decisions and the softmax function for multi-class classification:"),
   p("P(y = c | x) = exp(w_c . x + b_c) / sum_k(exp(w_k . x + b_k))", { align: AlignmentType.CENTER, italics: true }),
   p("Optimization is performed using cross-entropy loss minimization with an L2 regularization penalty to prevent overfitting on infrequent vocabulary terms."),
@@ -537,7 +519,7 @@ docElements.push(
   p("", { spaceAfter: 120 }),
 
   h2("2.3 Technical Feasibility"),
-  p("The project is built on the established Node.js, Express, React, and Python ecosystems. Python's scikit-learn and pandas libraries provide fast, memory-efficient vectorization and model training that executes in under two seconds on a standard dual-core laptop without requiring dedicated GPU hardware. The backend server utilizes Express.js, providing asynchronous non-blocking I/O capable of handling hundreds of concurrent API requests. The frontend utilizes Vite and React 18, ensuring sub-second bundle compilation and hot module replacement. All tools are stable, widely supported, and compatible across Windows, macOS, and Linux operating systems."),
+  p("The project is built on the established Node.js, Express, React, and Python ecosystems. Python's scikit-learn [6] and pandas libraries provide fast, memory-efficient vectorization and model training that executes in under two seconds on a standard dual-core laptop without requiring dedicated GPU hardware. The backend server utilizes Express.js, providing asynchronous non-blocking I/O capable of handling hundreds of concurrent API requests. The frontend utilizes Vite and React 18, ensuring sub-second bundle compilation and hot module replacement. All tools are stable, widely supported, and compatible across Windows, macOS, and Linux operating systems."),
 
   h2("2.4 Economic Feasibility"),
   p("The entire software stack comprises open-source frameworks distributed under permissive MIT, BSD, and Apache licenses. No proprietary software licenses, cloud computing credits, or external API subscription tokens are required. Development, testing, and deployment can be carried out entirely on standard departmental lab computers, making the project economically feasible with zero financial expenditure."),
@@ -547,10 +529,8 @@ docElements.push(
   new Paragraph({ children: [new PageBreak()] })
 );
 
-// ==========================================
-// CHAPTER 3: PROJECT DESIGN
-// ==========================================
-docElements.push(
+// CHAPTER 3
+mainElements.push(
   h1("CHAPTER 3\nPROJECT DESIGN"),
   h2("3.1 System Architecture and Module Design"),
   p("The system follows a modular three-tier architectural pattern consisting of the Data & ML Engine, the REST API Application Tier, and the Interactive Presentation Layer. Figure 3.1 illustrates the structural decoupling between these components."),
@@ -595,15 +575,13 @@ docElements.push(
 
   h2("3.5 Algorithm Specification"),
   p("The end-to-end data processing and classification workflow follows a defined algorithmic procedure:"),
-  p("Algorithm 1: Review Processing and Sentiment Classification Pipeline", { bold: true }),
+  p("Algorithm 1: Review Processing and Sentiment Classification Workflow", { bold: true }),
   p("Input: Raw CSV file containing review_id, product, reviewer, rating, text.\nOutput: Enriched JSON store with sentiment predictions and spam flags.\n1. Read raw CSV into memory using pandas; drop records with null text or ratings.\n2. For each review text: unescape HTML entities, strip markup tags, and remove extra whitespace.\n3. Compute normalized text string norm_text by lowercasing and stripping non-alphanumeric characters.\n4. Group by norm_text to compute global dup_count.\n5. Evaluate heuristic rules: if dup_count >= 5 add 'copy-pasted'; if word count < 3 add 'too-short'; if uppercase letters > 60% add 'all-caps'; if exclamation marks >= 3 add 'excess-punctuation'; if matching promo regex add 'promotional/link'.\n6. Mark suspicious = true if flags list is non-empty.\n7. Deduplicate records matching identical (norm_text, product) pairs.\n8. Map ratings: <=2 -> Negative, ==3 -> Neutral, >=4 -> Positive.\n9. Fit TfidfVectorizer(ngram_range=(1,2), min_df=2, sublinear_tf=True) on training split.\n10. Train LogisticRegression(max_iter=1000, class_weight='balanced') on training vectors.\n11. Predict sentiment labels and maximum class confidence probabilities for all reviews.\n12. Export processed dataset to backend/data/reviews.json and evaluation metrics to metrics.txt via review_analysis.py.", { italics: true, spaceAfter: 180 }),
   new Paragraph({ children: [new PageBreak()] })
 );
 
-// ==========================================
-// CHAPTER 4: CODING AND IMPLEMENTATION
-// ==========================================
-docElements.push(
+// CHAPTER 4
+mainElements.push(
   h1("CHAPTER 4\nCODING AND IMPLEMENTATION"),
   h2("4.1 Programming Languages and Tools Used"),
   p("The technical stack was selected to achieve high development velocity, operational stability, and minimal hardware resource footprints:"),
@@ -611,14 +589,14 @@ docElements.push(
   createStyledTable(
     ["Layer / Tool", "Version", "Role / Purpose", "Reason for Selection"],
     [
-      ["Python", "3.10+", "Data cleaning & ML pipeline", "Rich scientific NLP ecosystem (scikit-learn, pandas)"],
-      ["scikit-learn", "1.5.0+", "Vectorization & classification", "Fast, deterministic multi-class Logistic Regression"],
-      ["Node.js", "24.20.0", "Backend runtime engine", "High throughput, event-driven asynchronous I/O"],
-      ["Express.js", "4.19.2", "REST API web framework", "Minimalist routing, robust middleware support"],
-      ["Mongoose", "8.4.0", "MongoDB ODM library", "Schema validation with flexible fallback handling"],
-      ["React", "18.3.1", "Frontend UI library", "Declarative component hierarchy and fast DOM updates"],
+      ["Python", "3.10+", "Data cleaning & sentiment analysis module", "Rich scientific NLP ecosystem (scikit-learn, pandas)"],
+      ["scikit-learn [6]", "1.5.0+", "Vectorization & classification", "Fast, deterministic multi-class Logistic Regression"],
+      ["Node.js [7]", "24.20.0", "Backend runtime engine", "High throughput, event-driven asynchronous I/O"],
+      ["Express.js [8]", "4.19.2", "REST API web framework", "Minimalist routing, robust middleware support"],
+      ["React [9]", "18.3.1", "Frontend UI library", "Declarative component hierarchy and fast DOM updates"],
       ["Vite", "5.4.21", "Frontend build tool", "Instant dev server startup and hot module reloading"],
-      ["Recharts", "2.12.7", "Data visualization", "Composable SVG charts with native React event hooks"],
+      ["Recharts [10]", "2.12.7", "Data visualization", "Composable SVG charts with native React event hooks"],
+      ["Mongoose [11]", "8.4.0", "MongoDB ODM library", "Schema validation with flexible fallback handling"],
       ["Axios", "1.7.2", "HTTP client", "Promise-based requests with automatic JSON parsing"]
     ],
     [1600, 1200, 2800, 4000]
@@ -652,7 +630,7 @@ docElements.push(
   p("", { spaceAfter: 120 }),
 
   h2("4.3 Implementation of Key Modules"),
-  h3("4.3.1 ML Pipeline & Rule-Based Spam Detection (review_analysis.py)"),
+  h3("4.3.1 Text Processing & Rule-Based Spam Detection (review_analysis.py)"),
   p("The preprocessing script cleans raw input strings, evaluates spam indicators, and trains the sentiment classifier:"),
   ...codeBlock([
     "def rule_flags(text, raw_dup_count):",
@@ -704,10 +682,8 @@ docElements.push(
   new Paragraph({ children: [new PageBreak()] })
 );
 
-// ==========================================
-// CHAPTER 5: INNOVATION AND CREATIVITY
-// ==========================================
-docElements.push(
+// CHAPTER 5
+mainElements.push(
   h1("CHAPTER 5\nINNOVATION AND CREATIVITY"),
   h2("5.1 Originality of Idea and Architecture"),
   p("Most academic sentiment analysis projects treat review mining as a pure text-classification task, ignoring the reality of deceptive spam. In real e-commerce platforms, classifying the sentiment of an automated bot review (e.g., 'BUY NOW DISCOUNT!') distorts the analytical outcome. The original contribution of this system lies in coupling rule-based heuristic screening with statistical NLP prior to model inference."),
@@ -721,10 +697,8 @@ docElements.push(
   new Paragraph({ children: [new PageBreak()] })
 );
 
-// ==========================================
-// CHAPTER 6: TESTING
-// ==========================================
-docElements.push(
+// CHAPTER 6
+mainElements.push(
   h1("CHAPTER 6\nTESTING"),
   h2("6.1 Testing Strategies"),
   p("A multi-level testing methodology was adopted:"),
@@ -767,10 +741,8 @@ docElements.push(
   new Paragraph({ children: [new PageBreak()] })
 );
 
-// ==========================================
-// CHAPTER 7: CHALLENGES AND PROBLEM-SOLVING
-// ==========================================
-docElements.push(
+// CHAPTER 7
+mainElements.push(
   h1("CHAPTER 7\nCHALLENGES AND PROBLEM-SOLVING"),
   h2("7.1 Challenges Faced"),
   p("1. Identifying Deceptive Reviews Without Supervised Labels: Raw e-commerce review dumps rarely contain verified ground-truth labels for deceptive content or bot generation. Relying solely on supervised training for spam detection would have required expensive manual annotation."),
@@ -779,17 +751,15 @@ docElements.push(
   p("4. MongoDB Deployment Dependency: Requiring a running local MongoDB instance on localhost:27017 caused project launch failures during initial supervisor demonstrations on laptops lacking MongoDB Community Server."),
 
   h2("7.2 Solutions Implemented"),
-  p("1. Heuristic Anomaly Screening Pipeline: We designed an empirical rule engine that inspects structural text characteristics (repetition counts, character case distribution, punctuation density, and promotional regex tokens) before applying NLP classification, eliminating the need for pre-annotated spam training datasets."),
+  p("1. Heuristic Anomaly Screening Architecture: We designed an empirical rule engine that inspects structural text characteristics (repetition counts, character case distribution, punctuation density, and promotional regex tokens) before applying NLP classification, eliminating the need for pre-annotated spam training datasets."),
   p("2. Scoped API Metrics and Bidirectional State Hooking: We modified /api/stats to accept filter query parameters, and restructured App.jsx so that clicking any chart element or dropdown triggers a synchronized fetch of both aggregated metrics and matching table records."),
   p("3. Vite Reverse Proxy Configuration: We configured the Vite dev server with server.proxy: { '/api': 'http://localhost:5000' }, routing all client requests through the local development server and eliminating CORS friction."),
   p("4. Graceful Database Fallback: We implemented an asynchronous initialization wrapper in server.js that tests MongoDB availability with a 4-second timeout. If unavailable, the server seamlessly loads backend/data/reviews.json, ensuring uninterrupted demonstration."),
   new Paragraph({ children: [new PageBreak()] })
 );
 
-// ==========================================
-// CHAPTER 8: CONCLUSION
-// ==========================================
-docElements.push(
+// CHAPTER 8
+mainElements.push(
   h1("CHAPTER 8\nCONCLUSION"),
   h2("8.1 Outcome of the Project"),
   p("The E-Commerce Product Review Sentiment Dashboard was successfully developed, evaluated, and demonstrated. The resulting software represents a functional, production-ready full-stack application that accurately isolates deceptive reviews, categorizes consumer opinions into Positive, Neutral, and Negative sentiments with 99.2% evaluation accuracy, and presents live findings through an intuitive, interactive dashboard. The project directly advances UN SDG 12 by empowering consumers with transparent feedback signals."),
@@ -820,10 +790,8 @@ docElements.push(
   new Paragraph({ children: [new PageBreak()] })
 );
 
-// ==========================================
-// CHAPTER 9: TEAM ROLES AND COORDINATION
-// ==========================================
-docElements.push(
+// CHAPTER 9
+mainElements.push(
   h1("CHAPTER 9\nTEAM ROLES AND COORDINATION"),
   h2("9.1 Individual Roles and Contributions"),
   p("Each group member held clear, specialized technical ownership across the project lifecycle:"),
@@ -863,7 +831,7 @@ docElements.push(
     ["Date", "Meeting Mode", "Agenda / Topics Covered", "Key Outcomes & Action Points"],
     [
       ["21 Aug 2026", "In-person (GCET)", "Review-0: Project Idea submission and supervisor discussion", "Idea 1 approved by Mr. Avijit Sasmal; SDG 12 alignment finalized."],
-      ["15 Sep 2026", "In-person (GCET)", "Review-1: Problem statement, theoretical concepts, and data pipeline", "Supervisor advised adding duplicate count detection to catch bot networks."],
+      ["15 Sep 2026", "In-person (GCET)", "Review-1: Problem statement, theoretical concepts, and data preprocessing architecture", "Supervisor advised adding duplicate count detection to catch bot networks."],
       ["10 Oct 2026", "Online (Discord)", "Internal sprint: Resolving CORS issues and Express stats schema", "Implemented Vite proxy and scoped query params in /api/stats."],
       ["04 Nov 2026", "In-person (GCET)", "Review-2: Working demonstration of backend and frontend UI", "Supervisor approved bidirectional chart interaction; advised adding test cases."],
       ["18 Nov 2026", "In-person (GCET)", "Review-3 / Pre-final draft review of project documentation", "Document formatting verified against guidelines; Turnitin checks initiated."]
@@ -873,33 +841,30 @@ docElements.push(
   new Paragraph({ children: [new PageBreak()] })
 );
 
-// ==========================================
-// REFERENCES
-// ==========================================
-docElements.push(
+// REFERENCES (Sequential IEEE format)
+mainElements.push(
   h1("REFERENCES"),
   p("[1]  B. Pang and L. Lee, “Opinion mining and sentiment analysis,” Foundations and Trends in Information Retrieval, vol. 2, no. 1–2, pp. 1–135, 2008, doi: 10.1561/1500000011."),
   p("[2]  N. Jindal and B. Liu, “Opinion spam and analysis,” in Proc. 2008 International Conference on Web Search and Data Mining (WSDM '08), Palo Alto, CA, USA, 2008, pp. 219–230."),
-  p("[3]  F. Pedregosa et al., “Scikit-learn: Machine learning in Python,” Journal of Machine Learning Research, vol. 12, pp. 2825–2830, 2011."),
+  p("[3]  United Nations, “Goal 12: Ensure sustainable consumption and production patterns,” Department of Economic and Social Affairs, UN Sustainable Development Goals. Accessed: Aug. 21, 2026. [Online]. Available: https://sdgs.un.org/goals/goal12"),
   p("[4]  C. D. Manning, P. Raghavan, and H. Schütze, Introduction to Information Retrieval, 1st ed. Cambridge, UK: Cambridge University Press, 2008."),
   p("[5]  E. H. Huang, R. Socher, C. D. Manning, and A. Y. Ng, “Improving word representations via global context and multiple word prototypes,” in Proc. 50th Annual Meeting of the Association for Computational Linguistics (ACL), Jeju Island, Korea, 2012, pp. 873–882."),
-  p("[6]  Express.js Foundation, “Express - Node.js web application framework,” Expressjs.com. Accessed: Nov. 15, 2026. [Online]. Available: https://expressjs.com"),
-  p("[7]  Meta Open Source, “React – A JavaScript library for building user interfaces,” React.dev. Accessed: Nov. 18, 2026. [Online]. Available: https://react.dev"),
-  p("[8]  Recharts Community, “Recharts: Redefined chart library built with React and D3,” Recharts.org. Accessed: Nov. 20, 2026. [Online]. Available: https://recharts.org"),
-  p("[9]  MongoDB Inc., “Mongoose ODM v8.4 Documentation,” Mongoosejs.com. Accessed: Nov. 12, 2026. [Online]. Available: https://mongoosejs.com/docs"),
-  p("[10] United Nations, “Goal 12: Ensure sustainable consumption and production patterns,” Department of Economic and Social Affairs, UN Sustainable Development Goals. Accessed: Aug. 21, 2026. [Online]. Available: https://sdgs.un.org/goals/goal12"),
+  p("[6]  F. Pedregosa et al., “Scikit-learn: Machine learning in Python,” Journal of Machine Learning Research, vol. 12, pp. 2825–2830, 2011."),
+  p("[7]  Node.js Foundation, “Node.js v24.20.0 Documentation,” Nodejs.org. Accessed: Nov. 10, 2026. [Online]. Available: https://nodejs.org/docs"),
+  p("[8]  Express.js Foundation, “Express - Node.js web application framework,” Expressjs.com. Accessed: Nov. 15, 2026. [Online]. Available: https://expressjs.com"),
+  p("[9]  Meta Open Source, “React – A JavaScript library for building user interfaces,” React.dev. Accessed: Nov. 18, 2026. [Online]. Available: https://react.dev"),
+  p("[10] Recharts Community, “Recharts: Redefined chart library built with React and D3,” Recharts.org. Accessed: Nov. 20, 2026. [Online]. Available: https://recharts.org"),
+  p("[11] MongoDB Inc., “Mongoose ODM v8.4 Documentation,” Mongoosejs.com. Accessed: Nov. 12, 2026. [Online]. Available: https://mongoosejs.com/docs"),
   new Paragraph({ children: [new PageBreak()] })
 );
 
-// ==========================================
 // APPENDICES
-// ==========================================
 const screenOverview = path.join(__dirname, "assets", "screenshot_overview.png");
 const screenLaptop = path.join(__dirname, "assets", "screenshot_laptop_backpack.png");
 const screenSpeaker = path.join(__dirname, "assets", "screenshot_bluetooth_speaker.png");
 const screenTable = path.join(__dirname, "assets", "screenshot_suspicious_table.jpg");
 
-docElements.push(
+mainElements.push(
   h1("APPENDICES"),
   h2("Appendix A: Source Code Listing"),
   p("Complete source code repository: https://github.com/vaibhavporwal25/review-sentiment-dashboard", { italics: true }),
@@ -983,7 +948,7 @@ docElements.push(
   h2("Appendix C: User Manual"),
   p("Prerequisites: Node.js (v18 or higher) and Python (v3.9 or higher)."),
   p("1. Clone or extract the project directory to the target system."),
-  p("2. To initialize the ML pipeline: navigate to /ml, execute 'pip install -r requirements.txt', and run 'python review_analysis.py' to generate clean data."),
+  p("2. To initialize the machine learning module: navigate to /ml, execute 'pip install -r requirements.txt', and run 'python review_analysis.py' to generate clean data."),
   p("3. To run the backend server: navigate to /backend, run 'npm install', and start with 'node server.js'. The service listens on http://localhost:5000."),
   p("4. To start the user interface: navigate to /frontend, run 'npm install', and launch with 'npm run dev'. Access the application at http://localhost:5173."),
 
@@ -992,39 +957,44 @@ docElements.push(
   p("[Turnitin Digital Receipt & Similarity Index Summary Page Attached Here]", { align: AlignmentType.CENTER, italics: true })
 );
 
-// Create Document with Mirror Margins (Section 1 of Document Style Instructions)
+// CONSTRUCT DOCUMENT WITH PRECISE 3-TIER SECTIONS (Mirror Margins + Strict Numbering)
+const pageProps = {
+  size: {
+    width: 11906, // A4
+    height: 16838
+  },
+  margin: {
+    top: 1440,
+    bottom: 1440,
+    left: 2160,  // Inside 1.5 in
+    right: 1440, // Outside 1.0 in
+    header: 720,
+    footer: 720,
+    mirrorMargins: true
+  }
+};
+
 const doc = new Document({
   styles: {
     default: {
       document: {
-        run: {
-          font: FONT_NAME,
-          size: 24, // 12pt
-          color: "000000"
-        },
-        paragraph: {
-          spacing: { line: 360, after: 120 }
-        }
+        run: { font: FONT_NAME, size: 24, color: "000000" },
+        paragraph: { spacing: { line: 360, after: 120 } }
       }
     }
   },
   sections: [
+    // Section 0: Cover page (counted, no footer)
+    {
+      properties: { page: pageProps },
+      children: coverElements
+    },
+    // Section 1: Preliminary Pages (lower-case Roman numerals: ii, iii, iv...)
     {
       properties: {
         page: {
-          size: {
-            width: 11906, // A4 width: 210mm in twips
-            height: 16838 // A4 height: 297mm in twips
-          },
-          margin: {
-            top: 1440,
-            bottom: 1440,
-            left: 2160,  // Inside margin (binding edge)
-            right: 1440, // Outside margin
-            header: 720,
-            footer: 720,
-            mirrorMargins: true
-          }
+          ...pageProps,
+          pageNumbers: { start: 2, formatType: NumberFormat.LOWER_ROMAN }
         }
       },
       footers: {
@@ -1043,7 +1013,33 @@ const doc = new Document({
           ]
         })
       },
-      children: docElements
+      children: prelimElements
+    },
+    // Section 2: Main Report Chapters (Arabic numerals starting from 1)
+    {
+      properties: {
+        page: {
+          ...pageProps,
+          pageNumbers: { start: 1, formatType: NumberFormat.DECIMAL }
+        }
+      },
+      footers: {
+        default: new Footer({
+          children: [
+            new Paragraph({
+              alignment: AlignmentType.CENTER,
+              children: [
+                new TextRun({
+                  children: [PageNumber.CURRENT],
+                  font: FONT_NAME,
+                  size: 22
+                })
+              ]
+            })
+          ]
+        })
+      },
+      children: mainElements
     }
   ]
 });
@@ -1058,7 +1054,7 @@ Packer.toBuffer(doc).then((buffer) => {
     fs.writeFileSync(outputPath, buffer);
     console.log("Also updated original at: " + outputPath);
   } catch (e) {
-    console.log("Note: Original file was open in Word, saved to Final version.");
+    console.log("Note: Original file was locked by Word, updated _Final version.");
   }
 }).catch(err => {
   console.error("Error generating docx:", err);
