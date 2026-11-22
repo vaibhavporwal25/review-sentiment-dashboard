@@ -18,7 +18,8 @@ const {
   Header,
   Footer,
   PageNumber,
-  NumberFormat
+  NumberFormat,
+  ImageRun
 } = docx;
 
 const FONT_NAME = "Times New Roman";
@@ -193,16 +194,40 @@ const docElements = [];
 // ==========================================
 // 1. COVER / TITLE PAGE
 // ==========================================
+const logoPath = path.join(__dirname, "assets", "gcet_logo.jpg");
+const logoData = fs.existsSync(logoPath) ? fs.readFileSync(logoPath) : null;
+
 docElements.push(
-  p("Galgotias College of Engineering & Technology", { bold: true, size: 32, align: AlignmentType.CENTER, spaceAfter: 60 }),
-  p("Greater Noida", { size: 26, align: AlignmentType.CENTER, spaceAfter: 120 }),
-  p("Department of Computer Applications", { bold: true, size: 28, align: AlignmentType.CENTER, spaceAfter: 240 }),
-  p("Mini Project (BMC353)", { bold: true, size: 26, align: AlignmentType.CENTER, spaceAfter: 180 }),
-  p("Report on", { italics: true, size: 24, align: AlignmentType.CENTER, spaceAfter: 180 }),
-  p("E-COMMERCE PRODUCT REVIEW SENTIMENT DASHBOARD", { bold: true, size: 40, align: AlignmentType.CENTER, spaceAfter: 240 }),
-  p("Submitted in partial fulfilment of the requirements for the degree of", { size: 24, align: AlignmentType.CENTER, spaceAfter: 60 }),
-  p("Master of Computer Applications – 3rd Semester", { bold: true, size: 26, align: AlignmentType.CENTER, spaceAfter: 120 }),
-  p("Session: 2026–27", { bold: true, size: 24, align: AlignmentType.CENTER, spaceAfter: 360 }),
+  p("Galgotias College of Engineering & Technology", { bold: true, size: 30, align: AlignmentType.CENTER, spaceAfter: 40 }),
+  p("Greater Noida", { size: 24, align: AlignmentType.CENTER, spaceAfter: 80 }),
+  p("Department of Computer Applications", { bold: true, size: 26, align: AlignmentType.CENTER, spaceAfter: 160 })
+);
+
+if (logoData) {
+  docElements.push(
+    new Paragraph({
+      alignment: AlignmentType.CENTER,
+      spacing: { before: 80, after: 180 },
+      children: [
+        new ImageRun({
+          data: logoData,
+          transformation: {
+            width: 110,
+            height: 110
+          }
+        })
+      ]
+    })
+  );
+}
+
+docElements.push(
+  p("Mini Project (BMC353)", { bold: true, size: 26, align: AlignmentType.CENTER, spaceAfter: 120 }),
+  p("Report on", { italics: true, size: 22, align: AlignmentType.CENTER, spaceAfter: 120 }),
+  p("E-COMMERCE PRODUCT REVIEW SENTIMENT DASHBOARD", { bold: true, size: 36, align: AlignmentType.CENTER, spaceAfter: 180 }),
+  p("Submitted in partial fulfilment of the requirements for the degree of", { size: 22, align: AlignmentType.CENTER, spaceAfter: 40 }),
+  p("Master of Computer Applications – 3rd Semester", { bold: true, size: 24, align: AlignmentType.CENTER, spaceAfter: 80 }),
+  p("Session: 2026–27", { bold: true, size: 22, align: AlignmentType.CENTER, spaceAfter: 240 }),
   
   createStyledTable(
     ["Submitted by:", "Under the supervision of:"],
@@ -256,7 +281,7 @@ docElements.push(
 docElements.push(
   h1("DECLARATION"),
   p("We hereby declare that the mini project report titled “E-Commerce Product Review Sentiment Dashboard”, submitted to the Department of Computer Applications, Galgotias College of Engineering & Technology, Greater Noida, is a record of original work carried out by us under the supervision of Mr. Avijit Sasmal, Assistant Professor, Department of Computer Applications."),
-  p("We further declare that this work has not been submitted, in part or in full, to any other university or institute for the award of any degree or diploma. All sources of information, text, figures and code taken from the work of others have been duly acknowledged and cited in the References."),
+  p("We further declare that this work has not been submitted, in part or in full, to any other university or institute for the award of any degree or diploma. All sources of information, text, figures, and code taken from the work of others have been duly acknowledged and cited in the References."),
   p("We also declare that generative AI tools have not been used to generate content submitted here as our original work. Use of technical tools was limited to reading official software documentation, syntax verification, and debugging during implementation. We understand that this report will undergo Turnitin verification for similarity and AI-writing."),
   p("Date: 23 November 2026", { spaceBefore: 180 }),
   p("Place: Greater Noida", { spaceAfter: 240 }),
@@ -379,9 +404,10 @@ docElements.push(
       ["Figure 3.4", "MongoDB Review Entity Schema and Index Structure", "14"],
       ["Figure 3.5", "UI Layout Wireframe of Interactive Dashboard", "15"],
       ["Figure 4.1", "Directory Structure of Frontend, Backend, and ML Modules", "19"],
-      ["Figure B.1", "Main Dashboard Showing Overall KPI Metrics and Charts", "43"],
-      ["Figure B.2", "Interactive Cross-Filtering by Selecting Smart Watch Product", "44"],
-      ["Figure B.3", "Filtered Table Showing Suspicious Review Flags", "45"]
+      ["Figure B.1", "Main Dashboard Overview with Aggregate Sentiment Charts and KPI Metrics", "42"],
+      ["Figure B.2", "Interactive Cross-Filtering by Product and Sentiment (Laptop Backpack — Positive)", "43"],
+      ["Figure B.3", "Dynamic Chart Scoping and Distribution for Bluetooth Speaker", "44"],
+      ["Figure B.4", "Customer Feedback Ledger Highlighting Screened Deceptive and Bot Reviews", "45"]
     ],
     [1800, 6600, 1200]
   ),
@@ -450,7 +476,7 @@ docElements.push(
 
   h2("1.3 Objectives"),
   p("The main objectives of this mini project are formulated as follows:"),
-  p("1. Data Refinement and Automated Text Normalization: To develop a robust preprocessing pipeline that strips HTML artifacts, lowercases, eliminates punctuation noise, and removes identical duplicate entries to produce reliable textual data for model training."),
+  p("1. Data Refinement and Automated Text Normalization: To develop a robust preprocessing pipeline that strips HTML artifacts, lowercases text, eliminates punctuation noise, and removes identical duplicate entries to produce reliable textual data for model training."),
   p("2. Heuristic Deceptive Review Screening: To design and implement a rule-based detection engine capable of flagging suspicious reviews based on high copy-paste frequency, extreme character capitalization, excessive punctuation, and promotional phrase patterns."),
   p("3. Multi-Class Sentiment Classification: To train and evaluate a scikit-learn machine learning classifier utilizing sublinear TF-IDF feature extraction and Logistic Regression to categorize clean customer feedback into Positive, Neutral, and Negative classes."),
   p("4. Resilient REST API Service: To build an Express.js backend offering dynamic querying and statistics calculation with dual persistence—supporting MongoDB along with an automated fallback to a local JSON database."),
@@ -570,7 +596,7 @@ docElements.push(
   h2("3.5 Algorithm Specification"),
   p("The end-to-end data processing and classification workflow follows a defined algorithmic procedure:"),
   p("Algorithm 1: Review Processing and Sentiment Classification Pipeline", { bold: true }),
-  p("Input: Raw CSV file containing review_id, product, reviewer, rating, text.\nOutput: Enriched JSON store with sentiment predictions and spam flags.\n1. Read raw CSV into memory using pandas; drop records with null text or ratings.\n2. For each review text: unescape HTML entities, strip markup tags, remove extra whitespace.\n3. Compute normalized text string norm_text by lowercasing and stripping non-alphanumeric characters.\n4. Group by norm_text to compute global dup_count.\n5. Evaluate heuristic rules: if dup_count >= 5 add 'copy-pasted'; if word count < 3 add 'too-short'; if uppercase letters > 60% add 'all-caps'; if exclamation marks >= 3 add 'excess-punctuation'; if matching promo regex add 'promotional/link'.\n6. Mark suspicious = true if flags list is non-empty.\n7. Deduplicate records matching identical (norm_text, product) pairs.\n8. Map ratings: <=2 -> Negative, ==3 -> Neutral, >=4 -> Positive.\n9. Fit TfidfVectorizer(ngram_range=(1,2), min_df=2, sublinear_tf=True) on training split.\n10. Train LogisticRegression(max_iter=1000, class_weight='balanced') on training vectors.\n11. Predict sentiment labels and maximum class confidence probabilities for all reviews.\n12. Export processed dataset to backend/data/reviews.json and evaluation metrics to metrics.txt.", { italics: true, spaceAfter: 180 }),
+  p("Input: Raw CSV file containing review_id, product, reviewer, rating, text.\nOutput: Enriched JSON store with sentiment predictions and spam flags.\n1. Read raw CSV into memory using pandas; drop records with null text or ratings.\n2. For each review text: unescape HTML entities, strip markup tags, and remove extra whitespace.\n3. Compute normalized text string norm_text by lowercasing and stripping non-alphanumeric characters.\n4. Group by norm_text to compute global dup_count.\n5. Evaluate heuristic rules: if dup_count >= 5 add 'copy-pasted'; if word count < 3 add 'too-short'; if uppercase letters > 60% add 'all-caps'; if exclamation marks >= 3 add 'excess-punctuation'; if matching promo regex add 'promotional/link'.\n6. Mark suspicious = true if flags list is non-empty.\n7. Deduplicate records matching identical (norm_text, product) pairs.\n8. Map ratings: <=2 -> Negative, ==3 -> Neutral, >=4 -> Positive.\n9. Fit TfidfVectorizer(ngram_range=(1,2), min_df=2, sublinear_tf=True) on training split.\n10. Train LogisticRegression(max_iter=1000, class_weight='balanced') on training vectors.\n11. Predict sentiment labels and maximum class confidence probabilities for all reviews.\n12. Export processed dataset to backend/data/reviews.json and evaluation metrics to metrics.txt via review_analysis.py.", { italics: true, spaceAfter: 180 }),
   new Paragraph({ children: [new PageBreak()] })
 );
 
@@ -607,7 +633,7 @@ docElements.push(
     "├── ml/                        # Machine learning & data preprocessing",
     "│   ├── data/reviews_raw.csv   # Raw incoming customer reviews",
     "│   ├── generate_sample_data.py# Test corpus generation utility",
-    "│   ├── pipeline.py            # Text cleaning, rule engine & model trainer",
+    "│   ├── review_analysis.py     # Text cleaning, rule engine & model trainer",
     "│   ├── metrics.txt            # Precision, recall, and accuracy output",
     "│   └── requirements.txt       # Python dependency specifications",
     "├── backend/                   # REST API service",
@@ -626,7 +652,7 @@ docElements.push(
   p("", { spaceAfter: 120 }),
 
   h2("4.3 Implementation of Key Modules"),
-  h3("4.3.1 ML Pipeline & Rule-Based Spam Detection (pipeline.py)"),
+  h3("4.3.1 ML Pipeline & Rule-Based Spam Detection (review_analysis.py)"),
   p("The preprocessing script cleans raw input strings, evaluates spam indicators, and trains the sentiment classifier:"),
   ...codeBlock([
     "def rule_flags(text, raw_dup_count):",
@@ -684,7 +710,7 @@ docElements.push(
 docElements.push(
   h1("CHAPTER 5\nINNOVATION AND CREATIVITY"),
   h2("5.1 Originality of Idea and Architecture"),
-  p("Most academic sentiment analysis projects treat review mining as a pure text-classification task, ignoring the reality of deceptive spam. In real e-commerce platforms, classifying the sentiment of an automated bot review (e.g. 'BUY NOW DISCOUNT!') distort the analytical outcome. The original contribution of this system lies in coupling rule-based heuristic screening with statistical NLP prior to model inference."),
+  p("Most academic sentiment analysis projects treat review mining as a pure text-classification task, ignoring the reality of deceptive spam. In real e-commerce platforms, classifying the sentiment of an automated bot review (e.g., 'BUY NOW DISCOUNT!') distorts the analytical outcome. The original contribution of this system lies in coupling rule-based heuristic screening with statistical NLP prior to model inference."),
   p("By isolating anomalous entries (such as duplicate identical submissions across unrelated accounts) before evaluating customer satisfaction, the system ensures that computed sentiment percentages reflect genuine buyer experiences rather than coordinated seller spam."),
 
   h2("5.2 Value Additions Beyond Basic Requirements"),
@@ -805,7 +831,7 @@ docElements.push(
   createStyledTable(
     ["Member Name & Roll No.", "Assigned Role", "Modules Handled", "Report Chapters", "Key Initiative / Ownership"],
     [
-      ["Vaishnavi\n2500970140208\n(Group Leader)", "Data & NLP Lead", "ml/pipeline.py\nml/generate_sample_data.py\nModel training & evaluation", "Chapters 1, 2, 6\nAppendix A", "Formulated the 5-point heuristic spam rule framework and evaluated class-weighted TF-IDF parameters."],
+      ["Vaishnavi\n2500970140208\n(Group Leader)", "Data & NLP Lead", "ml/review_analysis.py\nml/generate_sample_data.py\nModel training & evaluation", "Chapters 1, 2, 6\nAppendix A", "Formulated the 5-point heuristic spam rule framework and evaluated class-weighted TF-IDF parameters."],
       ["Vivek Kumar\n2500970140211", "Backend & Database Architect", "backend/server.js\nMongoose schemas\nREST API endpoints", "Chapters 3, 4\nAppendix C", "Engineered the graceful dual-mode storage engine allowing seamless local JSON fallback without MongoDB."],
       ["Vaibhav\n2500970140206", "Frontend & UI/UX Engineer", "frontend/src/App.jsx\nfrontend/src/styles.css\nRecharts visualizations", "Chapters 5, 7, 8\nAppendix B", "Architected the bidirectional chart cross-filtering mechanism and designed responsive active filter chips."]
     ],
@@ -868,11 +894,16 @@ docElements.push(
 // ==========================================
 // APPENDICES
 // ==========================================
+const screenOverview = path.join(__dirname, "assets", "screenshot_overview.png");
+const screenLaptop = path.join(__dirname, "assets", "screenshot_laptop_backpack.png");
+const screenSpeaker = path.join(__dirname, "assets", "screenshot_bluetooth_speaker.png");
+const screenTable = path.join(__dirname, "assets", "screenshot_suspicious_table.jpg");
+
 docElements.push(
   h1("APPENDICES"),
   h2("Appendix A: Source Code Listing"),
-  p("Complete source code repository: https://github.com/galgotias-mca/review-sentiment-dashboard (Private Academic Repository)", { italics: true }),
-  p("Listing A.1: Key Processing Pipeline Routine (ml/pipeline.py)", { bold: true }),
+  p("Complete source code repository: https://github.com/vaibhavporwal25/review-sentiment-dashboard", { italics: true }),
+  p("Listing A.1: Key Processing Routine (ml/review_analysis.py)", { bold: true }),
   ...codeBlock([
     "# Text normalization and rule-based screening engine",
     "def clean(t):",
@@ -890,19 +921,69 @@ docElements.push(
     "df['flags'] = [rule_flags(t, c) for t, c in zip(df['text'], df['dup_count'])]",
     "df = df.drop_duplicates(subset=['norm', 'product']).reset_index(drop=True)"
   ]),
+  new Paragraph({ children: [new PageBreak()] }),
 
   h2("Appendix B: Screenshots"),
-  p("Figure B.1 illustrates the default landing state of the dashboard displaying all 597 reviews, KPI summary cards, the donut pie chart, and the stacked product sentiment bar chart:"),
-  p("[Screenshot Placeholder: Main Dashboard Overview with light theme, crisp cards, and Recharts]", { align: AlignmentType.CENTER, italics: true }),
-  figureCaption("Figure B.1: Main Dashboard Showing Overall KPI Metrics and Charts"),
-  p("Figure B.2 demonstrates the bidirectional cross-filtering behavior when a user clicks on the Smart Watch bar or selects it from the dropdown:"),
-  p("[Screenshot Placeholder: Scoped Dashboard Showing Smart Watch sentiment breakdown]", { align: AlignmentType.CENTER, italics: true }),
-  figureCaption("Figure B.2: Interactive Cross-Filtering by Selecting Smart Watch Product"),
+  p("Figure B.1 illustrates the main dashboard landing view displaying aggregate KPI summary metrics, the donut pie chart, and the stacked product bar chart:"),
+  new Paragraph({
+    alignment: AlignmentType.CENTER,
+    spacing: { before: 80, after: 80 },
+    children: [
+      new ImageRun({
+        data: fs.readFileSync(screenOverview),
+        transformation: { width: 480, height: 285 }
+      })
+    ]
+  }),
+  figureCaption("Figure B.1: Main Dashboard Overview with Aggregate Sentiment Charts and KPI Metrics"),
+  new Paragraph({ children: [new PageBreak()] }),
+
+  p("Figure B.2 demonstrates the bidirectional cross-filtering behavior when a user selects Laptop Backpack and filters by Positive sentiment:"),
+  new Paragraph({
+    alignment: AlignmentType.CENTER,
+    spacing: { before: 80, after: 80 },
+    children: [
+      new ImageRun({
+        data: fs.readFileSync(screenLaptop),
+        transformation: { width: 480, height: 285 }
+      })
+    ]
+  }),
+  figureCaption("Figure B.2: Interactive Cross-Filtering by Product and Sentiment (Laptop Backpack — Positive)"),
+  new Paragraph({ children: [new PageBreak()] }),
+
+  p("Figure B.3 displays dynamic chart entity scoping and distribution recalculation for Bluetooth Speaker:"),
+  new Paragraph({
+    alignment: AlignmentType.CENTER,
+    spacing: { before: 80, after: 80 },
+    children: [
+      new ImageRun({
+        data: fs.readFileSync(screenSpeaker),
+        transformation: { width: 480, height: 285 }
+      })
+    ]
+  }),
+  figureCaption("Figure B.3: Dynamic Chart Scoping and Distribution for Bluetooth Speaker"),
+  new Paragraph({ children: [new PageBreak()] }),
+
+  p("Figure B.4 depicts the customer feedback ledger with highlighted deceptive and bot reviews flagged by the heuristic rule engine:"),
+  new Paragraph({
+    alignment: AlignmentType.CENTER,
+    spacing: { before: 80, after: 80 },
+    children: [
+      new ImageRun({
+        data: fs.readFileSync(screenTable),
+        transformation: { width: 480, height: 285 }
+      })
+    ]
+  }),
+  figureCaption("Figure B.4: Customer Feedback Ledger Highlighting Screened Deceptive and Bot Reviews"),
+  new Paragraph({ children: [new PageBreak()] }),
 
   h2("Appendix C: User Manual"),
   p("Prerequisites: Node.js (v18 or higher) and Python (v3.9 or higher)."),
   p("1. Clone or extract the project directory to the target system."),
-  p("2. To initialize the ML pipeline: navigate to /ml, execute 'pip install -r requirements.txt', and run 'python pipeline.py' to generate clean data."),
+  p("2. To initialize the ML pipeline: navigate to /ml, execute 'pip install -r requirements.txt', and run 'python review_analysis.py' to generate clean data."),
   p("3. To run the backend server: navigate to /backend, run 'npm install', and start with 'node server.js'. The service listens on http://localhost:5000."),
   p("4. To start the user interface: navigate to /frontend, run 'npm install', and launch with 'npm run dev'. Access the application at http://localhost:5173."),
 
@@ -912,7 +993,6 @@ docElements.push(
 );
 
 // Create Document with Mirror Margins (Section 1 of Document Style Instructions)
-// Inside: 1.5 in (2160 twips), Outside: 1.0 in (1440 twips), Top: 1.0 in, Bottom: 1.0 in
 const doc = new Document({
   styles: {
     default: {
@@ -968,10 +1048,18 @@ const doc = new Document({
   ]
 });
 
+const outputPathFinal = path.resolve(__dirname, "../../E-Commerce_Review_Sentiment_Dashboard_Project_Report_Final.docx");
 const outputPath = path.resolve(__dirname, "../../E-Commerce_Review_Sentiment_Dashboard_Project_Report.docx");
+
 Packer.toBuffer(doc).then((buffer) => {
-  fs.writeFileSync(outputPath, buffer);
-  console.log("Report generated successfully at: " + outputPath);
+  fs.writeFileSync(outputPathFinal, buffer);
+  console.log("Report generated successfully at: " + outputPathFinal);
+  try {
+    fs.writeFileSync(outputPath, buffer);
+    console.log("Also updated original at: " + outputPath);
+  } catch (e) {
+    console.log("Note: Original file was open in Word, saved to Final version.");
+  }
 }).catch(err => {
   console.error("Error generating docx:", err);
 });
