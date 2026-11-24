@@ -7,7 +7,7 @@
 
 ---
 
-## 👥 Project Team & Supervision
+##  Project Team & Supervision
 
 * **Project Supervisor:** Mr. Avijit Sasmal (Assistant Professor, Department of Computer Applications)
 * **Team Members:**
@@ -17,7 +17,7 @@
 
 ---
 
-## 📌 Project Overview & Problem Statement
+##  Project Overview & Problem Statement
 
 E-commerce marketplaces host hundreds of user comments per product. Shoppers face difficulty distinguishing genuine customer feedback from fake, spam, and duplicate reviews, while sellers lack a clean, consolidated overview of customer sentiment.
 
@@ -29,14 +29,14 @@ This project delivers an interactive, end-to-end full-stack web application that
 
 ---
 
-## 🌍 UN Sustainable Development Goal Alignment
+##  UN Sustainable Development Goal Alignment
 
 * **Primary SDG:** **SDG 12 — Responsible Consumption and Production** (*Target 12.8*)
 * Promotes transparent, reliable purchasing decisions by highlighting genuine customer satisfaction scores and filtering out manipulative spam.
 
 ---
 
-## 🛠️ Technology Stack
+##  Technology Stack
 
 | Layer | Technologies Used |
 | :--- | :--- |
@@ -47,7 +47,7 @@ This project delivers an interactive, end-to-end full-stack web application that
 
 ---
 
-## 🚀 Getting Started & Execution
+##  Getting Started & Execution
 
 ### 1. Machine Learning Pipeline (`/ml`)
 ```bash
@@ -75,13 +75,13 @@ npm run dev
 
 ---
 
-## 📡 REST API Endpoints
+##  REST API Endpoints
 
 * `GET /api/stats` — Fetches aggregate metrics (Total, Genuine, Suspicious, Positive Share, per-product distribution, and rule flag breakdown). Accepts optional query parameters: `product`, `search`, and `hideSuspicious=true`.
 * `GET /api/reviews` — Paginated and filterable customer review ledger. Accepts `page`, `limit`, `product`, `sentiment`, `search`, and `hideSuspicious`.
 
 ---
 
-## 📄 Academic License & Integrity
+##  Academic License & Integrity
 
 Developed for academic evaluation under **Mini Project (BMC353)** at Galgotias College of Engineering & Technology. All rights reserved by the student team.
