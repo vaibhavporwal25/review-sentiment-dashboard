@@ -13,7 +13,7 @@ import {
   ResponsiveContainer
 } from "recharts";
 
-const COLORS = { Positive: "#16a34a", Neutral: "#f59e0b", Negative: "#dc2626" };
+const COLORS = { Positive: "#16836b", Neutral: "#c58b35", Negative: "#c65b52" };
 
 export default function App() {
   const [stats, setStats] = useState(null);
@@ -69,14 +69,13 @@ export default function App() {
     <div className="wrap">
       <div className="header-row">
         <div>
-          <h1>E-Commerce Review Sentiment Dashboard</h1>
-          <p className="subtitle">
-            Interactive analytics for customer sentiment and suspicious feedback detection
-          </p>
+          <p className="eyebrow">REVIEW INTELLIGENCE <span>·</span> OVERVIEW</p>
+          <h1>Customer review pulse</h1>
+          <p className="subtitle">Sentiment trends and review quality across your products.</p>
         </div>
         {hasActiveFilters && (
           <button className="reset-btn" onClick={resetFilters}>
-            Reset All Filters ✕
+            Clear filters
           </button>
         )}
       </div>
@@ -84,22 +83,22 @@ export default function App() {
       {/* KPI Cards */}
       <div className="kpis">
         <div className="card">
-          <span>{f.product ? `Total (${f.product})` : "Total reviews"}</span>
+          <span>{f.product ? `Reviews · ${f.product}` : "Reviews analysed"}</span>
           <b>{stats.total}</b>
         </div>
         <div className="card">
-          <span>Genuine</span>
+          <span>Unflagged reviews</span>
           <b>{stats.genuine}</b>
         </div>
         <div className="card warn">
-          <span>Flagged suspicious</span>
+          <span>Flagged for review</span>
           <b>{stats.suspicious}</b>
         </div>
         <div className="card">
-          <span>Positive share</span>
+          <span>Positive sentiment</span>
           <b>
             {Math.round(
-              ((stats.sentiment?.Positive || 0) / (stats.genuine || 1)) * 100
+              ((stats.sentiment?.Positive || 0) / (totalPie || 1)) * 100
             )}
             %
           </b>
@@ -110,7 +109,8 @@ export default function App() {
       <div className="card filter-card">
         <div className="filters">
           <input
-            placeholder="Search reviews…"
+            placeholder="Search review text"
+            aria-label="Search review text"
             value={f.search}
             onChange={(e) => set("search", e.target.value)}
           />
@@ -142,14 +142,14 @@ export default function App() {
               checked={f.hideSuspicious}
               onChange={(e) => set("hideSuspicious", e.target.checked)}
             />
-            Hide suspicious
+            Exclude flagged reviews
           </label>
         </div>
 
         {/* Active Filter Chips */}
         {hasActiveFilters && (
           <div className="active-chips">
-            <span className="chips-label">Active:</span>
+            <span className="chips-label">Filters</span>
             {f.product && (
               <button className="chip" onClick={() => set("product", "")}>
                 Product: <b>{f.product}</b> ✕
@@ -174,7 +174,7 @@ export default function App() {
         )}
 
         <div className="interactive-hint">
-          💡 <b>Interactive Charts:</b> Click any <b>pie slice</b> to filter by sentiment. Click any <b>product bar</b> to view that product's specific sentiment breakdown. Click again to toggle off.
+          Select a sentiment or product in either chart to narrow the review list. Select it again to clear that filter.
         </div>
       </div>
 
@@ -183,9 +183,9 @@ export default function App() {
         <div className="card chart-card">
           <div className="chart-header">
             <h3>
-              {f.product ? `Sentiment for "${f.product}"` : "Overall Sentiment"}
+              {f.product ? `Sentiment · ${f.product}` : "Sentiment distribution"}
               <span className="chart-sub">
-                {f.hideSuspicious ? " (Genuine only)" : " (All reviews)"}
+                {f.hideSuspicious ? " · Unflagged only" : " · All reviews"}
               </span>
             </h3>
             {f.sentiment && (
@@ -247,7 +247,7 @@ export default function App() {
         <div className="card chart-card">
           <div className="chart-header">
             <h3>
-              Sentiment by Product
+              Product comparison
               {f.product ? (
                 <span className="badge-highlight">Selected: {f.product}</span>
               ) : (
@@ -309,10 +309,11 @@ export default function App() {
         <div className="table-header">
           <h3>
             Filtered Customer Reviews
-            <span className="table-count">({reviews.total} found)</span>
+              <span className="table-count">{reviews.total.toLocaleString()} results</span>
           </h3>
         </div>
 
+        <div className="table-scroll">
         <table>
           <thead>
             <tr>
@@ -353,6 +354,7 @@ export default function App() {
             )}
           </tbody>
         </table>
+        </div>
 
         <div className="pager">
           <button
