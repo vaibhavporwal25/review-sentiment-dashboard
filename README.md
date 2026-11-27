@@ -92,6 +92,6 @@ Free access link:  https://review-sentiment-dashboard-dkko.onrender.com/
 
 ---
 
-## 📄 Academic License & Integrity
+## Academic License & Integrity
 
 Developed for academic evaluation under **Mini Project (BMC353)** at Galgotias College of Engineering & Technology. All rights reserved by the student team.
