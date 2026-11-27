@@ -84,20 +84,11 @@ npm run dev
 
 ---
 
-## 🌐 Live Cloud Deployment (Permanent Public Link)
+##  Live Cloud Deployment (Permanent Public Link)
 
 This repository is configured for **1-click free deployment on [Render](https://render.com/)**:
 
-1. Fork or push this repository to GitHub.
-2. Sign up on [Render.com](https://render.com/) (Free).
-3. Click **New +** > **Web Service**.
-4. Connect this GitHub repository: `vaibhavporwal25/review-sentiment-dashboard`.
-5. Render will automatically read `render.yaml`:
-   - **Environment:** `Node`
-   - **Build Command:** `npm run build`
-   - **Start Command:** `npm start`
-6. Click **Deploy Web Service**.
-7. You get a permanent, live HTTPS link: `https://<your-service-name>.onrender.com` that anyone can access globally from any browser or smartphone.
+Free access link:  https://review-sentiment-dashboard-dkko.onrender.com/
 
 ---
 
